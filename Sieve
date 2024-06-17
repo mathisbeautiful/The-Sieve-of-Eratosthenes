@@ -1,0 +1,60 @@
+import java.util.Scanner;
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        int lastNum; // last number in the sieve's interval
+        Scanner keyboard = new Scanner(System.in);
+        
+        System.out.print("Enter the last integer for the sieve's interval: ");
+        lastNum = keyboard.nextInt();
+        System.out.println();
+        sieve(lastNum); // applies the Sieve of Eratosthenes method to the interval [1, lastNum]
+    }
+
+    // The Sieve of Eratosthenes method
+    public static void sieve(int lastNum) {
+        ArrayList<Integer> primes = new ArrayList<>(); // for storing all primes in the interval [1, lastNum]
+        primes.add(2); // adds the first prime number
+
+        // for storing all potential primes in the interval
+        int[] integers = new int[lastNum/2];
+
+        // adds all odd numbers in the interval [3, lastNum] to the array
+        // 1 is not prime, so we start at 3
+        for (int i = 0; i < lastNum-2; i+=2) {
+            integers[i] = i+3;
+        }
+
+        ArrayList<Integer> primeList = crossOut(primes, integers);
+
+        // prints out the primes in the interval [1, lastNum]
+        // using the formatting of an array
+        System.out.print("[");
+        for (int i = 0; i < primeList.size()-2; i++)
+            System.out.print(primeList.get(i) + ", ");
+        System.out.print(primeList.get(primeList.size()-1));
+        System.out.print("]");
+    }
+
+    // builds the list of all primes identified in the array of integers
+    public static ArrayList<Integer> crossOut(ArrayList<Integer> primes, int[] integers) {
+        boolean isPrime;
+
+        for (int i = 1; i < integers.length; i++) {
+            isPrime = true;
+            for (int prime : primes) {
+                if (prime*prime >= integers[i])
+                    break; // the integer is not divisible by any prime <= to the current prime
+                if (integers[i] % prime == 0) {
+                    isPrime = false; // a number is divisible by a number other than one and itself -> it is not prime
+                    break;
+                }
+            }
+            if (isPrime) // isPrime is only true if the integer was not divisible by every prime s.t. prime^2 < integer
+                primes.add(integers[i]);
+        }
+
+        return primes;
+    }
+}
